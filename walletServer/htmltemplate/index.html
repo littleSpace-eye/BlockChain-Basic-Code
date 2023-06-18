@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BufferWallet</title>
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <script src="bootstrap.bundle.min.js"></script>
+  <script src="jquery.min.js"></script>
+  <script src="blockchain.js"></script>
+  </script>
+  <style>
+    body {
+      width: 400px;
+      height: 400px;
+      margin: auto;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    ul.dropdown-menu li {
+      margin-bottom: 10px;
+      /* Adjust the value as per your preference */
+    }
+
+    .custom-button {
+      width: 200px;
+      height: 50px;
+      font-size: 18px;
+    }
+
+    .card {
+      display: none;
+    }
+
+    .modal {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mt-3 p-3">
+    <h1>BufferWallet</h1>
+    <nav>
+      <div class="nav nav-underline" id="nav-tab" role="tablist">
+
+        <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+          type="button" role="tab" aria-controls="nav-profile" aria-selected="false">账户信息
+        </button>
+        <button class="nav-link" id="nav-transfer-tab" data-bs-toggle="tab" data-bs-target="#nav-transfer" type="button"
+          role="tab" aria-controls="nav-transfer" aria-selected="false">转账
+        </button>
+        <button class="nav-link" id="nav-check-tab" data-bs-toggle="tab" data-bs-target="#nav-check" type="button"
+          role="tab" aria-controls="nav-check" aria-selected="false">查看
+        </button>
+        <button class="nav-link" id="nav-checkblock-tab" data-bs-toggle="tab" data-bs-target="#nav-checkblock"
+          type="button" role="tab" aria-controls="nav-check" aria-selected="false">区块和交易查询
+        </button>
+      </div>
+    </nav>
+
+    <div class="tab-content" id="nav-tabContent">
+
+      <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab"
+        tabindex="0">
+        <div id="content-active" class="mt-3 px-3">
+          <div class="d-flex justify-content-end mb-3">
+            <div class="btn-group">
+              <div class="btn-group me-2" role="group" aria-label="First group">
+                <button type="button" class="btn btn-outline-secondary  btn-sm" id="reload_wallet">生成钱包</button>
+                <button type="button" class="btn btn-outline-secondary  btn-sm"
+                  id="loadWalletByPrivatekey">加载钱包</button>
+                <button type="button" class="btn btn-outline-secondary  btn-sm" id="copyButton">一键复制</button>
+                <button type="button" class="btn btn-outline-secondary  btn-sm" id="get_amount">查看余额</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="input-group input-group-sm mb-3">
+          <span class="input-group-text">privateKey:</span>
+          <input type="text" class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-sm" id="private_key">
+        </div>
+        <div class="input-group input-group-sm mb-3">
+          <span class="input-group-text">publicKey:</span>
+          <input type="text" class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-sm" id="public_key">
+        </div>
+        <div class="input-group input-group-sm mb-3">
+          <span class="input-group-text">address:</span>
+          <input type="text" class="form-control" aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-sm" id="blockchain_address">
+        </div>
+        <div class="d-flex justify-content-end mb-3">
+          余额：
+          <div id="wallet_amount"></div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="nav-transfer" role="tabpanel" aria-labelledby="nav-transfer-tab" tabindex="0">
+        <div class="mt-3">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm">公钥</span>
+            <input type="text" class="form-control" id="public_key_trans" aria-label="Sizing example input"
+              aria-describedby="inputGroup-sizing-sm">
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm">私钥</span>
+            <input type="text" class="form-control" id="private_key_trans" aria-label="Sizing example input"
+              aria-describedby="inputGroup-sizing-sm">
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm">发送地址</span>
+            <input type="text" class="form-control" id="blockchain_address_trans" aria-label="Sizing example input"
+              aria-describedby="inputGroup-sizing-sm">
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm">接收地址</span>
+            <input type="text" class="form-control" id="recipient_address" aria-label="Sizing example input"
+              aria-describedby="inputGroup-sizing-sm">
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm">金额</span>
+            <input type="text" class="form-control" id="send_amount" aria-label="Sizing example input"
+              aria-describedby="inputGroup-sizing-sm">
+          </div>
+          <div class="container-sm mt-3">
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-primary" id="send_money_button">发送</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="tab-pane fade" id="nav-check" role="tabpanel" aria-labelledby="nav-check-tab" tabindex="0">
+        <div id="get_blockchain"></div>
+      </div>
+      <div class="tab-pane fade" id="nav-checkblock" role="tabpanel" aria-labelledby="nav-check-block" tabindex="0">
+        <div class="mt-3">
+          <div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="get_block_num" placeholder="通过区块号查询"
+                aria-label="Recipient's username" aria-describedby="button-addon2">
+              <button class="btn btn-outline-secondary" type="button" id="btn-get-block-by-num">发送</button>
+            </div>
+
+          </div>
+        </div>
+        <div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" id="get-block-hash" placeholder="通过区块哈希查询"
+              aria-label="Recipient's username" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="btn-get-block-by-hash">发送</button>
+          </div>
+        </div>
+        <div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" id="get-trans-hash" placeholder="交易哈希查询交易"
+              aria-label="Recipient's username" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="btn-get-trans-by-hash">发送</button>
+          </div>
+        </div>
+        <div class="card" id="card-Block" style="width: 18rem;">
+          <div class="card-body">
+            <button id="close-button" type="button" class="btn-close" aria-label="Close" style="float: right;"></button>
+            <h5 id="card-title" class="card-title"></h5>
+            <p id="card-Timestamp" class="card-text" style="font-size: 0.875rem;"></p>
+            <p id="card-PreviousHash" class="card-text" style="font-size: 0.875rem;"></p>
+            <p id="card-Nonce" class="card-text" style="font-size: 0.875rem;"></p>
+            <p id="card-Transaction" class="card-text" style="font-size: 0.875rem;"></p>
+          </div>
+        </div>
+
+
+         <div class="modal" tabindex="-1" id="card-Transaction">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" class="card-title">Transaction</h5>
+                <button type="button" class="btn-close" id="close-button-Trans"  data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p id="card-Trans-sender-address" class="card-text" style="font-size: 0.875rem;"></p>
+                <p id="card-Trans-receive-address" class="card-text" style="font-size: 0.875rem;"></p>
+                <p id="card-Trans-hash" class="card-text" style="font-size: 0.875rem;"></p>
+                <p id="card-Trans-value" class="card-text" style="font-size: 0.875rem;"></p>
+              </div>
+    
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
